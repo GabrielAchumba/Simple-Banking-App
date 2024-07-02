@@ -1,12 +1,13 @@
 package services
 
 import (
+	"github.com/GabrielAchumba/Simple-Banking-App/common/conversion"
 	databasePackage "github.com/GabrielAchumba/Simple-Banking-App/database/models"
 	"github.com/GabrielAchumba/Simple-Banking-App/modules/transaction/dtos"
 )
 
 type ITransactionService interface {
-	CreateTransaction(createTransactionDTO dtos.CreateTransactionDTO) (interface{}, error)
+	CreateTransaction(createTransactionDTO dtos.CreateTransactionDTO) (dtos.CreateTransactionDTO, error)
 	GetTransactions() (interface{}, error)
 	GetTransaction(reference string) (interface{}, error)
 }
@@ -21,10 +22,12 @@ func New(_db *databasePackage.InMemoryDatabase) ITransactionService {
 	}
 }
 
-func (impl TransactionService) CreateTransaction(createTransactionDTO dtos.CreateTransactionDTO) (interface{}, error) {
+func (impl TransactionService) CreateTransaction(createTransactionDTO dtos.CreateTransactionDTO) (dtos.CreateTransactionDTO, error) {
 
 	result, err := impl.db.CreateTransaction(createTransactionDTO)
-	return result, err
+	var createdTransactionDTO dtos.CreateTransactionDTO
+	conversion.Conversion(result, &createdTransactionDTO)
+	return createdTransactionDTO, err
 }
 
 func (impl TransactionService) GetTransactions() (interface{}, error) {

@@ -30,7 +30,7 @@ func New(_transactionService services.ITransactionService) ITransactionControlle
 func (ctrl *TransactionController) CreateTransaction(ctx *gin.Context) *rest.Response {
 	var createTransactionDTO dtos.CreateTransactionDTO
 
-	err := ctx.BindJSON(createTransactionDTO)
+	err := ctx.BindJSON(&createTransactionDTO)
 	if err != nil {
 		return _response.GetError(http.StatusBadRequest, err.Error())
 	}

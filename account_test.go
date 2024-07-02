@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/GabrielAchumba/Simple-Banking-App/common/errors"
 	"github.com/GabrielAchumba/Simple-Banking-App/constants"
 	"github.com/stretchr/testify/assert"
 
@@ -93,10 +94,16 @@ func TestCreateAccountHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	var response map[string]interface{}
 	err := json.Unmarshal(w.Body.Bytes(), &response)
+	if err != nil {
+		errors.Error(err.Error())
+	}
 	var convertedResponse rest.Response
 	conversion.Conversion(response, &convertedResponse)
 	var data1 interface{} = convertedResponse.Data
 	data2, err := conversion.ConvertInterfaceToMap(data1)
+	if err != nil {
+		errors.Error(err.Error())
+	}
 	assert.NoError(t, err)
 	//var data map[string]interface{} = convertedResponse.Data
 	assert.Equal(t, account["balance"], data2["balance"])

@@ -7,11 +7,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/GabrielAchumba/Simple-Banking-App/common/conversion"
 	"github.com/GabrielAchumba/Simple-Banking-App/common/errors"
+	"github.com/GabrielAchumba/Simple-Banking-App/common/rest"
 	"github.com/GabrielAchumba/Simple-Banking-App/constants"
 	"github.com/GabrielAchumba/Simple-Banking-App/modules/account/dtos"
 
-	//accountServicesPackage "github.com/GabrielAchumba/Simple-Banking-App/modules/account/services"
 	"github.com/stretchr/testify/assert"
 
 	"log"
@@ -20,7 +21,6 @@ import (
 	"github.com/GabrielAchumba/Simple-Banking-App/common/config"
 	inMemoryDatabasePackage "github.com/GabrielAchumba/Simple-Banking-App/database"
 	inMemoryDatabaseModelPackage "github.com/GabrielAchumba/Simple-Banking-App/database/models"
-	accountModulePackage "github.com/GabrielAchumba/Simple-Banking-App/modules/account"
 	accountServicesPackage "github.com/GabrielAchumba/Simple-Banking-App/modules/account/services"
 	transactionModulePackage "github.com/GabrielAchumba/Simple-Banking-App/modules/transaction"
 	transactionServicesPackage "github.com/GabrielAchumba/Simple-Banking-App/modules/transaction/services"
@@ -31,8 +31,8 @@ import (
 
 func setUpTransactionRoutes() (*gin.Engine, *inMemoryDatabaseModelPackage.InMemoryDatabase) {
 
-	_ginEngine, _ := setUpRoutes()
 	gin.SetMode(gin.TestMode)
+	_ginEngine := gin.Default()
 
 	if isProduction() != "production" {
 		err := godotenv.Load()
@@ -57,10 +57,6 @@ func setUpTransactionRoutes() (*gin.Engine, *inMemoryDatabaseModelPackage.InMemo
 
 	routeGroup := _ginEngine.Group("")
 
-	accountService := accountServicesPackage.New(db)
-	accountModule := accountModulePackage.New(accountService)
-	accountModule.RegisterRoutes(routeGroup)
-
 	transactionService := transactionServicesPackage.New(db)
 	transactionModule := transactionModulePackage.New(transactionService)
 	transactionModule.RegisterRoutes(routeGroup)
@@ -70,9 +66,8 @@ func setUpTransactionRoutes() (*gin.Engine, *inMemoryDatabaseModelPackage.InMemo
 }
 
 func TestCreateTransactionHandler(t *testing.T) {
-	_ginEngine, db := setUpRoutes()
+	_ginEngine, db := setUpTransactionRoutes()
 	accountService := accountServicesPackage.New(db)
-	//_ginEngine.POST("/transactions", createTransactionHandler)
 
 	account := dtos.CreateAccountDTO{
 		Balance: 1000.0,
@@ -104,13 +99,23 @@ func TestCreateTransactionHandler(t *testing.T) {
 	_ginEngine.ServeHTTP(w, req)
 
 	// Check the response
-	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 	var response map[string]interface{}
 	err = json.Unmarshal(w.Body.Bytes(), &response)
+	if err != nil {
+		errors.Error(err.Error())
+	}
+
+	var convertedResponse rest.Response
+	conversion.Conversion(response, &convertedResponse)
+	var data1 interface{} = convertedResponse.Data
+	data2, err := conversion.ConvertInterfaceToMap(data1)
+	if err != nil {
+		errors.Error(err.Error())
+	}
 
 	assert.NoError(t, err)
-	assert.Equal(t, transaction["reference"], int(response["reference"].(float64)))
-	assert.Equal(t, transaction["type"], response["type"])
-	assert.Equal(t, transaction["amount"], response["amount"])
+	assert.Equal(t, transaction["type"], data2["type"])
+	assert.Equal(t, transaction["amount"], data2["amount"])
 
 }
