@@ -1,12 +1,13 @@
 package services
 
 import (
+	"github.com/GabrielAchumba/Simple-Banking-App/common/conversion"
 	databasePackage "github.com/GabrielAchumba/Simple-Banking-App/database/models"
 	"github.com/GabrielAchumba/Simple-Banking-App/modules/account/dtos"
 )
 
 type IAccountService interface {
-	Create(accountDTO dtos.CreateAccountDTO) (interface{}, error)
+	Create(accountDTO dtos.CreateAccountDTO) (dtos.CreateAccountDTO, error)
 }
 
 type AccountService struct {
@@ -19,8 +20,11 @@ func New(_db *databasePackage.InMemoryDatabase) IAccountService {
 	}
 }
 
-func (impl AccountService) Create(createAccountDTO dtos.CreateAccountDTO) (interface{}, error) {
+func (impl AccountService) Create(createAccountDTO dtos.CreateAccountDTO) (dtos.CreateAccountDTO, error) {
 
 	result, err := impl.db.CreateAccount(createAccountDTO)
-	return result, err
+	var createdAccountDTO dtos.CreateAccountDTO
+	conversion.SpreadOperation(createdAccountDTO, result)
+
+	return createdAccountDTO, err
 }
