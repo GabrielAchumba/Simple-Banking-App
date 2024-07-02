@@ -11,6 +11,7 @@ import (
 
 type IAccountController interface {
 	Create(ctx *gin.Context) *rest.Response
+	GetAccount(ctx *gin.Context) *rest.Response
 }
 
 type AccountController struct {
@@ -34,6 +35,18 @@ func (ctrl *AccountController) Create(ctx *gin.Context) *rest.Response {
 	}
 
 	result, err := ctrl.accountService.Create(createAccountDTO)
+	if err != nil {
+		return _response.GetError(http.StatusBadRequest, err.Error())
+	} else {
+		return _response.GetSuccess(http.StatusOK, result)
+	}
+}
+
+func (ctrl *AccountController) GetAccount(ctx *gin.Context) *rest.Response {
+
+	reference := ctx.Param("reference")
+
+	result, err := ctrl.accountService.GetAccount(reference)
 	if err != nil {
 		return _response.GetError(http.StatusBadRequest, err.Error())
 	} else {

@@ -15,6 +15,7 @@ type AccountModule struct {
 func New(_accountService services.IAccountService) *AccountModule {
 	accountModule := new(AccountModule)
 	accountModule.accountController = controllers.New(_accountService)
+	_accountService.SeedAdmin()
 	return accountModule
 }
 
@@ -25,4 +26,5 @@ func (accountModule *AccountModule) RegisterRoutes(routeGroup *gin.RouterGroup) 
 	serveHTTP := rest.ServeHTTP
 
 	moduleRoutes.POST("/"+constants.CreateAccount, serveHTTP(accountModule.accountController.Create))
+	moduleRoutes.GET("/"+constants.GetAccount, serveHTTP(accountModule.accountController.GetAccount))
 }

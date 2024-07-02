@@ -25,6 +25,9 @@ func New(_db *databasePackage.InMemoryDatabase) ITransactionService {
 func (impl TransactionService) CreateTransaction(createTransactionDTO dtos.CreateTransactionDTO) (dtos.CreateTransactionDTO, error) {
 
 	result, err := impl.db.CreateTransaction(createTransactionDTO)
+	if err != nil {
+		return dtos.CreateTransactionDTO{}, err
+	}
 	var createdTransactionDTO dtos.CreateTransactionDTO
 	conversion.Conversion(result, &createdTransactionDTO)
 	return createdTransactionDTO, err
@@ -33,11 +36,17 @@ func (impl TransactionService) CreateTransaction(createTransactionDTO dtos.Creat
 func (impl TransactionService) GetTransactions() (interface{}, error) {
 
 	result, err := impl.db.GetTransactions()
+	if err != nil {
+		return nil, err
+	}
 	return result, err
 }
 
 func (impl TransactionService) GetTransaction(reference string) (interface{}, error) {
 
 	result, err := impl.db.GetTransaction(reference)
+	if err != nil {
+		return nil, err
+	}
 	return result, err
 }
