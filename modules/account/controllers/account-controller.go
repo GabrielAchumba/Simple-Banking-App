@@ -28,7 +28,7 @@ func New(_accountService services.IAccountService) IAccountController {
 func (ctrl *AccountController) Create(ctx *gin.Context) *rest.Response {
 	var createAccountDTO dtos.CreateAccountDTO
 
-	err := ctx.BindJSON(createAccountDTO)
+	err := ctx.BindJSON(&createAccountDTO)
 	if err != nil {
 		return _response.GetError(http.StatusBadRequest, err.Error())
 	}

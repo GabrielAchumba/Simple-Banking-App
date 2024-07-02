@@ -50,7 +50,7 @@ func setUpRoutes() (*gin.Engine, *inMemoryDatabaseModelPackage.InMemoryDatabase)
 
 	transactionService := transactionServicesPackage.New(db)
 	transactionModule := transactionModulePackage.New(transactionService)
-	transactionModule.RegisterRoutes(routeGroup, "/transaction")
+	transactionModule.RegisterRoutes(routeGroup)
 
 	return _ginEngine, db
 

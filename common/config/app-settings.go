@@ -9,9 +9,6 @@ type Settings struct {
 	Database struct {
 		DatabaseNme        string
 		DatebaseConnection string
-		InMemoryDatabase   struct {
-			ArithmeticsTable map[int]interface{}
-		}
 	}
 
 	Tables struct {
@@ -30,11 +27,10 @@ func Setup() {
 	AppSettings.Database.DatabaseNme = os.Getenv("DATABASENAME")
 	AppSettings.Database.DatebaseConnection = os.Getenv("DATABASECONNECTION")
 
-	AppSettings.Tables.Arithmetics = os.Getenv("ARITHMETICS")
+	AppSettings.Tables.Arithmetics = os.Getenv("ACCOUNT")
+	AppSettings.Tables.Arithmetics = os.Getenv("TRANSACTION")
 
 	AppSettings.Server.Port = os.Getenv("PORT")
-
-	AppSettings.Database.InMemoryDatabase.ArithmeticsTable = make(map[int]interface{})
 
 	fmt.Println("Appsetings loaded successfully")
 }

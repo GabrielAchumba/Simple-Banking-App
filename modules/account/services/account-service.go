@@ -24,7 +24,7 @@ func (impl AccountService) Create(createAccountDTO dtos.CreateAccountDTO) (dtos.
 
 	result, err := impl.db.CreateAccount(createAccountDTO)
 	var createdAccountDTO dtos.CreateAccountDTO
-	conversion.SpreadOperation(createdAccountDTO, result)
+	conversion.Conversion(result, &createdAccountDTO)
 
 	return createdAccountDTO, err
 }

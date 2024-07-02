@@ -1,7 +1,7 @@
 package models
 
 type AccountModel struct {
-	ID      int     `json:"id"`
-	Number  string  `json:"number"`
-	Balance float64 `json:"balance"`
+	ID        int     `json:"id"`
+	Reference string  `json:"reference"`
+	Balance   float64 `json:"balance"`
 }

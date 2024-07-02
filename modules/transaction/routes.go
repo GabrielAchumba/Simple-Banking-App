@@ -18,7 +18,7 @@ func New(_transactionController services.ITransactionService) *TransactionModule
 	return transactionModule
 }
 
-func (transactionModule *TransactionModule) RegisterRoutes(routeGroup *gin.RouterGroup, controllerName string) {
+func (transactionModule *TransactionModule) RegisterRoutes(routeGroup *gin.RouterGroup) {
 
 	moduleRoutes := routeGroup.Group("/" + constants.TransactionControllerName)
 
